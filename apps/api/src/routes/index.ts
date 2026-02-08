@@ -1,8 +1,11 @@
 import { Hono } from "hono";
-import exampleRoutes from "../modules/example/routes/index";
+import sessionRoutes from "../modules/session/routes/index";
+import slotRoutes from "../modules/slot/routes/index";
 
 const app = new Hono();
 
-app.route("/example", exampleRoutes);
+
+app.route("/slot", sessionRoutes);
+app.route("/slot", slotRoutes);
 
 export default app;

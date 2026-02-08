@@ -6,6 +6,18 @@
     "dev": "tsc --watch"
   },
   "exports": {
+    "./slot/postCashout": {
+      "types": "./src/modules/slot/postCashout.network.ts",
+      "default": "./dist/modules/slot/postCashout.network.js"
+    },
+    "./slot/postRoll": {
+      "types": "./src/modules/slot/postRoll.network.ts",
+      "default": "./dist/modules/slot/postRoll.network.js"
+    },
+    "./session/getSession": {
+      "types": "./src/modules/session/getSession.network.ts",
+      "default": "./dist/modules/session/getSession.network.js"
+    },
     "./example/getExample": {
       "types": "./src/modules/example/getExample.network.ts",
       "default": "./dist/modules/example/getExample.network.js"
@@ -14,5 +26,8 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
   }
 }
