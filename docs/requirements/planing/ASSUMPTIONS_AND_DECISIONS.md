@@ -10,3 +10,9 @@
 
 - API error responses return a **fixed generic message** in the body — `{ error: "Bad request" }` for 400 or `{ error: "Unauthorized" }` for 401. No specific error descriptions or details.
 - Rationale: Reduces attack surface by not leaking internal state, validation logic, or implementation details to the client. Follows the existing error-handling pattern in the codebase. Specific error details are logged server-side only. This is a good pattern when we expect the api to only be consumed via the web app 
+
+
+# Decisions
+
+## Cookie value
+- Session ID is generated with `crypto.randomUUID()` so IDs are unpredictable and not guessable in practice; cookie is set with `httpOnly` and `sameSite: "Lax"`. Local/dev nginx has no SSL, so `secure` is not set there; **in production we will add `secure: true`** (HTTPS only).

@@ -2,6 +2,15 @@
 
 Monorepo starter with an API (Hono), a web app (Next.js), and shared packages. TypeScript throughout, with unit tests, optional nginx for local dev, and a Puppeteer sanity check.
 
+## Documentation
+
+The **`docs/`** folder holds the documentation for this project: **requirements**, **design**, and **thought process**. In particular, the planning documents under `docs/requirements/planing/` are:
+
+- [ASSUMPTIONS_AND_DECISIONS.md](docs/requirements/planing/ASSUMPTIONS_AND_DECISIONS.md)
+- [FLOW_PLANING.md](docs/requirements/planing/FLOW_PLANING.md)
+- [SERVER_PLANING.md](docs/requirements/planing/SERVER_PLANING.md)
+
+
 ## What's inside
 
 ### Apps
@@ -22,7 +31,7 @@ Workspace is defined in `pnpm-workspace.yaml` (`apps/*`, `packages/*`).
 
 ### API (`apps/api/`)
 
-- **Modular layout:** `src/modules/<module>/` with `routes/`, `dao/`, `guards/`, `utils/`, and `testing/` (route tests). Top-level `src/routes/` mounts module routes; `src/capabilities/` holds cross-cutting concerns (cors, logger, error-handling).
+- **Modular layout:** `src/modules/<module>/` with `routes/`, `dao/`, `guards/`, `lib/`, and `testing/` (route tests). Top-level `src/routes/` mounts module routes; `src/capabilities/` holds cross-cutting concerns (cors, logger, error-handling).
 - **Pattern:** One domain per module; routes use controllers/services; contracts live in `@repo/network`.
 
 ### Web (`apps/web/`)
