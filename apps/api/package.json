@@ -1,0 +1,25 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch run-time/run-local.ts",
+    "dev:no-watch": "tsx run-time/run-local.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@repo/network": "workspace:*",
+    "hono": "^4.8.10"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@hono/node-server": "^1.18.1",
+    "@types/node": "^20.11.17",
+    "dotenv": "^17.2.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4"
+  }
+}

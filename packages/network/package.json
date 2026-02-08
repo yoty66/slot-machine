@@ -1,0 +1,18 @@
+{
+  "name": "@repo/network",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "exports": {
+    "./example/getExample": {
+      "types": "./src/modules/example/getExample.network.ts",
+      "default": "./dist/modules/example/getExample.network.js"
+    }
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "^5.8.3"
+  }
+}

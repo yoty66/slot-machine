@@ -1,0 +1,15 @@
+{
+  "name": "@repo/sanity-check",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "sanity": "tsx src/run.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "dotenv": "^17.2.1",
+    "puppeteer": "^24.0.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
