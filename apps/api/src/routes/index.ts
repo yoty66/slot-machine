@@ -6,6 +6,6 @@ const app = new Hono();
 
 
 app.route("/slot/session", sessionRoutes);
-app.route("/slot/*", slotRoutes);
+app.route("/slot", slotRoutes);
 
 export default app;
