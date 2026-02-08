@@ -199,3 +199,15 @@ Browser                          Server
      |                        |
      |-- Play Again ----------|
 ```
+
+---
+
+## Error Handling
+
+**API:** All endpoints validate the session cookie and request state. On failure, the server logs the error internally and returns a **fixed generic message** (to reduce attack surface):
+- **401** — `{ error: "Unauthorized" }` — Missing or invalid session.
+- **400** — `{ error: "Bad request" }` — Invalid action given current state.
+
+No specific error details in the response. Error details are logged server-side only.
+
+**UI:** All API errors (network failures, 401, 400) are surfaced to the user via a **Shadcn Toaster** component (toast notification). The game UI remains on screen — errors do not navigate the user away or break the current view. The toast disappears after a few seconds.
