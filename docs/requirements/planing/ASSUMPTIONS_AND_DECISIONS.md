@@ -51,3 +51,13 @@ Rationale:
 ## WebApp - Single Page Application (SPA)
 - The application will be implemented as a **single page application** without traditional multi-page navigation.
 - Rationale: This approach eliminates the need for complex global state management solutions and avoids complications related to page navigation, state persistence, and route-based data synchronization. A single-page architecture simplifies the application structure and reduces architectural complexity while maintaining all required functionality. 
+
+## WebApp - Symbol display timing
+- Symbol display delays are **1.3s, 2.3s, and 3.3s** (includes 0.3s fade animation).
+- Rationale: Provides better visual experience with smooth fade transitions.
+
+## WebApp - Component architecture
+- All state and logic is encapsulated in the `SlotMachinePage` component, keeping presentation components display-only.
+- Rationale: Enables Container/Presentational pattern separation, improving testability and maintainability.
+
+

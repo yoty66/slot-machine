@@ -1,5 +1,5 @@
-import ExamplePage from "@/features/example-page/pages/example.page";
+import SlotMachinePage from "@/features/slot-machine/pages/SlotMachinePage";
 
 export default function Home() {
-  return <ExamplePage />;
+  return <SlotMachinePage />;
 }

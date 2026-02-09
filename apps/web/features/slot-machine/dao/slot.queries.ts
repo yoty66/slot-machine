@@ -22,17 +22,19 @@ export function useSession() {
 }
 
 export function useRoll() {
-  const queryClient = useQueryClient();
-
   return useMutation<postRoll_ResponseBody>({
     mutationFn: async () => {
       const res = await postRoll();
       return res.data;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(SESSION_QUERY_KEY, { credits: data.credits });
-    },
   });
+}
+
+export function useUpdateCredits() {
+  const queryClient = useQueryClient();
+  return (credits: number) => {
+    queryClient.setQueryData(SESSION_QUERY_KEY, { credits });
+  };
 }
 
 export function useCashout() {
