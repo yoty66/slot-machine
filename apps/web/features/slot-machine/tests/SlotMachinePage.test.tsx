@@ -43,7 +43,7 @@ type MutationResult<T> = {
 };
 
 function mockUseSession(
-  overrides: Partial<UseQueryResult<getSession_ResponseBody>> = {}
+  overrides: Partial<UseQueryResult<getSession_ResponseBody>> = {},
 ) {
   vi.mocked(useSession).mockReturnValue({
     data: undefined,
@@ -70,7 +70,7 @@ function mockUseSession(
 }
 
 function createMockMutation<T>(
-  overrides: Partial<MutationResult<T>> = {}
+  overrides: Partial<MutationResult<T>> = {},
 ): MutationResult<T> {
   return {
     mutate: vi.fn(),
@@ -96,7 +96,11 @@ describe("SlotMachinePage", () => {
 
     // Mock useRoll hook from hooks/useRoll
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 10,
       isSpinning: false,
@@ -169,7 +173,11 @@ describe("SlotMachinePage", () => {
     });
     const mockHandleRoll = vi.fn();
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 10,
       isSpinning: false,
@@ -189,7 +197,11 @@ describe("SlotMachinePage", () => {
       status: "success",
     });
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 9,
       isSpinning: true,
@@ -209,7 +221,11 @@ describe("SlotMachinePage", () => {
       status: "success",
     });
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 9,
       isSpinning: true,
@@ -235,7 +251,11 @@ describe("SlotMachinePage", () => {
     // Mock useRoll to return progressive symbol states
     // Stage 1: Initial - all null, spinning
     vi.mocked(useRoll).mockReturnValueOnce({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 9,
       isSpinning: true,
@@ -254,7 +274,11 @@ describe("SlotMachinePage", () => {
 
     // Stage 2: After 1s - first symbol set (will display after SlotReel's 1s delay)
     vi.mocked(useRoll).mockReturnValueOnce({
-      delayedSymbols: ["C", null, null] as [string | null, string | null, string | null],
+      delayedSymbols: ["C", null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 9,
       isSpinning: true,
@@ -262,17 +286,25 @@ describe("SlotMachinePage", () => {
       reset: vi.fn(),
     } as never);
 
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     rerender(<SlotMachinePage />);
     // After SlotReel's 1s delay, first symbol should display
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     blocks = screen.getAllByTestId("slot-block");
     expect(blocks[0]).toHaveTextContent("C");
     expect(blocks[1]).toHaveTextContent("X");
 
     // Stage 3: After 2s - second symbol set
     vi.mocked(useRoll).mockReturnValueOnce({
-      delayedSymbols: ["C", "L", null] as [string | null, string | null, string | null],
+      delayedSymbols: ["C", "L", null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 9,
       isSpinning: true,
@@ -280,17 +312,25 @@ describe("SlotMachinePage", () => {
       reset: vi.fn(),
     } as never);
 
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     rerender(<SlotMachinePage />);
     // After SlotReel's 1s delay, second symbol should display
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     blocks = screen.getAllByTestId("slot-block");
     expect(blocks[1]).toHaveTextContent("L");
     expect(blocks[2]).toHaveTextContent("X");
 
     // Stage 4: After 3s - third symbol set, rollResult available
     vi.mocked(useRoll).mockReturnValueOnce({
-      delayedSymbols: ["C", "L", "O"] as [string | null, string | null, string | null],
+      delayedSymbols: ["C", "L", "O"] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: {
         symbols: ["C", "L", "O"] as [string, string, string],
         credits: 9,
@@ -303,10 +343,14 @@ describe("SlotMachinePage", () => {
       reset: vi.fn(),
     } as never);
 
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     rerender(<SlotMachinePage />);
     // After SlotReel's 1s delay, third symbol should display
-    act(() => { vi.advanceTimersByTime(1000); });
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     blocks = screen.getAllByTestId("slot-block");
     expect(blocks[2]).toHaveTextContent("O");
 
@@ -323,7 +367,11 @@ describe("SlotMachinePage", () => {
     });
 
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: ["C", "C", "C"] as [string | null, string | null, string | null],
+      delayedSymbols: ["C", "C", "C"] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: {
         symbols: ["C", "C", "C"] as [string, string, string],
         credits: 19,
@@ -339,10 +387,12 @@ describe("SlotMachinePage", () => {
     render(<SlotMachinePage />);
     fireEvent.click(screen.getByTestId("roll-button"));
 
-    act(() => { vi.advanceTimersByTime(3000); });
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
 
     expect(screen.getByTestId("result-feedback")).toHaveTextContent(
-      "You won 10 credits!"
+      "You won 10 credits!",
     );
 
     vi.useRealTimers();
@@ -358,7 +408,11 @@ describe("SlotMachinePage", () => {
     });
 
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: ["C", "L", "O"] as [string | null, string | null, string | null],
+      delayedSymbols: ["C", "L", "O"] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: {
         symbols: ["C", "L", "O"] as [string, string, string],
         credits: 9,
@@ -374,10 +428,12 @@ describe("SlotMachinePage", () => {
     render(<SlotMachinePage />);
     fireEvent.click(screen.getByTestId("roll-button"));
 
-    act(() => { vi.advanceTimersByTime(3000); });
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
 
     expect(screen.getByTestId("result-feedback")).toHaveTextContent(
-      "No luck this time."
+      "No luck this time.",
     );
 
     vi.useRealTimers();
@@ -390,7 +446,11 @@ describe("SlotMachinePage", () => {
       status: "success",
     });
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 0,
       isSpinning: false,
@@ -446,7 +506,11 @@ describe("SlotMachinePage", () => {
 
     const mockReset = vi.fn();
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 10,
       isSpinning: false,
@@ -462,7 +526,7 @@ describe("SlotMachinePage", () => {
     fireEvent.click(screen.getByTestId("roll-button"));
 
     expect(toast.error).toHaveBeenCalledWith(
-      "Something went wrong. Please try again."
+      "Something went wrong. Please try again.",
     );
     expect(mockReset).toHaveBeenCalled();
   });
@@ -483,7 +547,7 @@ describe("SlotMachinePage", () => {
     fireEvent.click(screen.getByTestId("cashout-button"));
 
     expect(toast.error).toHaveBeenCalledWith(
-      "Something went wrong. Please try again."
+      "Something went wrong. Please try again.",
     );
   });
 
@@ -499,7 +563,11 @@ describe("SlotMachinePage", () => {
 
     const mockResetRoll = vi.fn();
     vi.mocked(useRoll).mockReturnValue({
-      delayedSymbols: [null, null, null] as [string | null, string | null, string | null],
+      delayedSymbols: [null, null, null] as [
+        string | null,
+        string | null,
+        string | null,
+      ],
       rollResult: null,
       credits: 0,
       isSpinning: false,

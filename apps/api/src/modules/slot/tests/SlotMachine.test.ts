@@ -14,7 +14,9 @@ const makeGenerator = (reels: [Symbol, Symbol, Symbol][]): ISymbolGenerator => {
   };
 };
 
-const makeCalculator = (results: { isWin: boolean; reward: number }[]): IRewardCalculator => {
+const makeCalculator = (
+  results: { isWin: boolean; reward: number }[],
+): IRewardCalculator => {
   let callIndex = 0;
   return {
     calculate() {
@@ -35,7 +37,11 @@ describe("SlotMachine", () => {
       makeCheatPolicy(false),
     );
     const result = machine.roll(10);
-    expect(result).toEqual({ symbols: ["C", "L", "O"], isWin: false, reward: 0 });
+    expect(result).toEqual({
+      symbols: ["C", "L", "O"],
+      isWin: false,
+      reward: 0,
+    });
   });
 
   it("win scenario, no re-roll: returns win symbols and reward", () => {
@@ -45,27 +51,51 @@ describe("SlotMachine", () => {
       makeCheatPolicy(false),
     );
     const result = machine.roll(10);
-    expect(result).toEqual({ symbols: ["W", "W", "W"], isWin: true, reward: 40 });
+    expect(result).toEqual({
+      symbols: ["W", "W", "W"],
+      isWin: true,
+      reward: 40,
+    });
   });
 
   it("win scenario, re-roll triggered, re-roll is loss", () => {
     const machine = new SlotMachine(
-      makeGenerator([["W", "W", "W"], ["C", "L", "O"]]),
-      makeCalculator([{ isWin: true, reward: 40 }, { isWin: false, reward: 0 }]),
+      makeGenerator([
+        ["W", "W", "W"],
+        ["C", "L", "O"],
+      ]),
+      makeCalculator([
+        { isWin: true, reward: 40 },
+        { isWin: false, reward: 0 },
+      ]),
       makeCheatPolicy(true),
     );
     const result = machine.roll(50);
-    expect(result).toEqual({ symbols: ["C", "L", "O"], isWin: false, reward: 0 });
+    expect(result).toEqual({
+      symbols: ["C", "L", "O"],
+      isWin: false,
+      reward: 0,
+    });
   });
 
   it("win scenario, re-roll triggered, re-roll is also win: returns re-rolled win", () => {
     const machine = new SlotMachine(
-      makeGenerator([["W", "W", "W"], ["C", "C", "C"]]),
-      makeCalculator([{ isWin: true, reward: 40 }, { isWin: true, reward: 10 }]),
+      makeGenerator([
+        ["W", "W", "W"],
+        ["C", "C", "C"],
+      ]),
+      makeCalculator([
+        { isWin: true, reward: 40 },
+        { isWin: true, reward: 10 },
+      ]),
       makeCheatPolicy(true),
     );
     const result = machine.roll(50);
-    expect(result).toEqual({ symbols: ["C", "C", "C"], isWin: true, reward: 10 });
+    expect(result).toEqual({
+      symbols: ["C", "C", "C"],
+      isWin: true,
+      reward: 10,
+    });
   });
 
   it("only one re-roll happens (not recursive)", () => {
@@ -83,7 +113,11 @@ describe("SlotMachine", () => {
         return { isWin: true, reward: 40 };
       },
     };
-    const machine = new SlotMachine(generator, calculator, makeCheatPolicy(true));
+    const machine = new SlotMachine(
+      generator,
+      calculator,
+      makeCheatPolicy(true),
+    );
     machine.roll(50);
     expect(generateCallCount).toBe(2);
     expect(calculateCallCount).toBe(2);

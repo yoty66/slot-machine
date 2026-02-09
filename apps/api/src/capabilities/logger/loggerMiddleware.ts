@@ -6,5 +6,5 @@ export const loggerMiddleware = honoLoggerMiddleware(
     const logMessage = `${message}  context: ${JSON.stringify(rest)}`;
     console.log(logMessage);
     logger.info(logMessage);
-  }
+  },
 );

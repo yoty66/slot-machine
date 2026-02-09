@@ -29,10 +29,10 @@ pnpm run sanity
 
 ## Environment
 
-| Variable           | Default                    | Description |
-|--------------------|----------------------------|-------------|
-| `SANITY_APP_URL`   | `http://localhost:3000`    | App URL (direct dev). With nginx use `http://app.local-dev.com` |
-| `HEADLESS`         | `true`                     | Set to `false` to see the browser window |
+| Variable         | Default                 | Description                                                     |
+| ---------------- | ----------------------- | --------------------------------------------------------------- |
+| `SANITY_APP_URL` | `http://localhost:3000` | App URL (direct dev). With nginx use `http://app.local-dev.com` |
+| `HEADLESS`       | `true`                  | Set to `false` to see the browser window                        |
 
 ## Local without nginx
 

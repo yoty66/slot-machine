@@ -4,7 +4,6 @@ import slotRoutes from "../modules/slot/routes/index";
 
 const app = new Hono();
 
-
 app.route("/slot/session", sessionRoutes);
 app.route("/slot", slotRoutes);
 

@@ -19,7 +19,8 @@ const TIMEOUT_MS = 15_000;
 // Pause between steps (ms) so you can watch the flow; set SANITY_STEP_DELAY=0 to disable
 const STEP_DELAY_MS = Number(process.env.SANITY_STEP_DELAY) || 1_500;
 
-const delay = (ms: number) => (ms > 0 ? new Promise((r) => setTimeout(r, ms)) : Promise.resolve());
+const delay = (ms: number) =>
+  ms > 0 ? new Promise((r) => setTimeout(r, ms)) : Promise.resolve();
 
 async function run(): Promise<void> {
   const browser = await puppeteer.launch({
@@ -45,15 +46,23 @@ async function run(): Promise<void> {
     });
     if (!response || !response.ok()) {
       throw new Error(
-        `Page load failed: ${response?.status() ?? "no response"} ${response?.statusText() ?? ""}`
+        `Page load failed: ${response?.status() ?? "no response"} ${response?.statusText() ?? ""}`,
       );
     }
     await delay(STEP_DELAY_MS);
 
     // 2. Wait for app to load (session fetched, credit display visible)
     const loadResult = await Promise.race([
-      page.waitForSelector('[data-testid="credit-display"]', { timeout: TIMEOUT_MS }).then((el) => ({ type: "ready" as const, el })),
-      page.waitForSelector('[data-testid="error-screen"]', { timeout: TIMEOUT_MS }).then(() => ({ type: "error" as const, el: null })),
+      page
+        .waitForSelector('[data-testid="credit-display"]', {
+          timeout: TIMEOUT_MS,
+        })
+        .then((el) => ({ type: "ready" as const, el })),
+      page
+        .waitForSelector('[data-testid="error-screen"]', {
+          timeout: TIMEOUT_MS,
+        })
+        .then(() => ({ type: "error" as const, el: null })),
     ]).catch(() => ({ type: "timeout" as const, el: null }));
 
     if (loadResult.type === "error") {
@@ -68,27 +77,34 @@ async function run(): Promise<void> {
     // 3. Verify initial credits
     const initialCredits = await page.$eval(
       '[data-testid="credit-value"]',
-      (el) => (el as HTMLElement).innerText
+      (el) => (el as HTMLElement).innerText,
     );
     if (initialCredits.trim() !== "10") {
-      throw new Error(`Expected initial credits to be 10, got: ${initialCredits}`);
+      throw new Error(
+        `Expected initial credits to be 10, got: ${initialCredits}`,
+      );
     }
     console.log("Initial credits OK: 10.");
     await delay(STEP_DELAY_MS);
 
     // 4. Roll
-    const rollBtn = await page.waitForSelector('[data-testid="roll-button"]', { timeout: 5_000 });
+    const rollBtn = await page.waitForSelector('[data-testid="roll-button"]', {
+      timeout: 5_000,
+    });
     if (!rollBtn) throw new Error("Roll button not found");
     await rollBtn.click();
     console.log("Clicked roll...");
     await delay(STEP_DELAY_MS);
 
     // 5. Wait for result feedback (spin animation completes, result shown)
-    const resultEl = await page.waitForSelector('[data-testid="result-feedback"]', { timeout: TIMEOUT_MS });
+    const resultEl = await page.waitForSelector(
+      '[data-testid="result-feedback"]',
+      { timeout: TIMEOUT_MS },
+    );
     if (!resultEl) throw new Error("Result feedback not found after roll");
     const resultText = await page.evaluate(
       (el) => (el as HTMLElement).innerText,
-      resultEl
+      resultEl,
     );
     console.log(`Roll result: ${resultText}`);
     await delay(STEP_DELAY_MS);
@@ -102,19 +118,25 @@ async function run(): Promise<void> {
     await delay(STEP_DELAY_MS);
 
     // 7. Cashout
-    const cashoutBtn = await page.waitForSelector('[data-testid="cashout-button"]', { timeout: 5_000 });
+    const cashoutBtn = await page.waitForSelector(
+      '[data-testid="cashout-button"]',
+      { timeout: 5_000 },
+    );
     if (!cashoutBtn) throw new Error("Cashout button not found");
     await cashoutBtn.click();
     console.log("Clicked cashout...");
     await delay(STEP_DELAY_MS);
 
     // 8. Verify cashed out screen
-    const cashedOutScreen = await page.waitForSelector('[data-testid="cashed-out-screen"]', { timeout: TIMEOUT_MS });
+    const cashedOutScreen = await page.waitForSelector(
+      '[data-testid="cashed-out-screen"]',
+      { timeout: TIMEOUT_MS },
+    );
     if (!cashedOutScreen) throw new Error("Cashed out screen not found");
 
     const cashoutCredits = await page.$eval(
       '[data-testid="cashout-credits"]',
-      (el) => (el as HTMLElement).innerText
+      (el) => (el as HTMLElement).innerText,
     );
     const creditNum = Number(cashoutCredits.trim());
     if (isNaN(creditNum) || creditNum < 0) {

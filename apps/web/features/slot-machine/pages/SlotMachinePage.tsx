@@ -11,7 +11,12 @@ import CashedOutScreen from "../components/CashedOutScreen/CashedOut.screen";
 import PlayingScreen from "../components/PlayingScreen/Playing.screen";
 
 export default function SlotMachinePage() {
-  const { data: session, isLoading, isError: isSessionError, refetch } = useSession();
+  const {
+    data: session,
+    isLoading,
+    isError: isSessionError,
+    refetch,
+  } = useSession();
   const cashoutMutation = useCashout();
   const {
     delayedSymbols,
@@ -52,18 +57,14 @@ export default function SlotMachinePage() {
           <p className="text-muted-foreground">Loading...</p>
         </div>
       )}
-      {screen === "error" && (
-        <ErrorScreen onRetry={() => refetch()} />
-      )}
+      {screen === "error" && <ErrorScreen onRetry={() => refetch()} />}
       {screen === "cashedOut" && (
         <CashedOutScreen
           credits={cashoutMutation.data?.credits ?? 0}
           onPlayAgain={handleNewGame}
         />
       )}
-      {screen === "gameOver" && (
-        <GameOverScreen onNewGame={handleNewGame} />
-      )}
+      {screen === "gameOver" && <GameOverScreen onNewGame={handleNewGame} />}
       {(screen === "playing" || screen === "spinning") && (
         <PlayingScreen
           credits={credits}

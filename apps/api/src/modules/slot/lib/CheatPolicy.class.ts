@@ -13,7 +13,9 @@ export class CheatPolicy implements ICheatPolicy {
   ) {}
 
   shouldReRoll(credits: number): boolean {
-    const bracket = this.brackets.find((b) => credits >= b.min && credits <= b.max);
+    const bracket = this.brackets.find(
+      (b) => credits >= b.min && credits <= b.max,
+    );
     if (!bracket) return false;
 
     const roll = Math.random();

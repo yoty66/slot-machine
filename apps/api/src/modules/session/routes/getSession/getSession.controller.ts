@@ -2,7 +2,10 @@ import { Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import type { getSession_ResponseBody } from "@repo/network/session/getSession";
 import { sessionManager } from "../../lib/SessionManager.class";
-import { SESSION_COOKIE_NAME, SESSION_COOKIE_OPTIONS } from "../../lib/session.constants";
+import {
+  SESSION_COOKIE_NAME,
+  SESSION_COOKIE_OPTIONS,
+} from "../../lib/session.constants";
 
 const router = new Hono();
 

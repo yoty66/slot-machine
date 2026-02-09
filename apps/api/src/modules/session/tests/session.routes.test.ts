@@ -4,9 +4,7 @@ import sessionRoutes from "../routes/index";
 import { sessionManager } from "../lib/SessionManager.class";
 import { INITIAL_CREDITS, SESSION_COOKIE_NAME } from "../lib/session.constants";
 
-const app = new Hono()
-  .basePath("/api")
-  .route("/slot/session", sessionRoutes);
+const app = new Hono().basePath("/api").route("/slot/session", sessionRoutes);
 
 describe("GET /api/slot/session", () => {
   beforeEach(() => {

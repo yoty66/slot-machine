@@ -7,7 +7,7 @@ export const SESSION_COOKIE_OPTIONS = {
   sameSite: "Lax" as const,
   path: "/",
   // For production with SSL
-  secure: process.env.NODE_ENV === "production"
+  secure: process.env.NODE_ENV === "production",
 };
 
 export const SESSION_CONTEXT_KEY = "session";

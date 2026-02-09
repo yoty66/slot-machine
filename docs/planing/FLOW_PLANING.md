@@ -2,11 +2,11 @@
 
 ## Endpoints
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/slot/session` | Get current session (auto-creates if none) |
-| POST | `/api/slot/roll` | Perform a roll |
-| POST | `/api/slot/cashout` | Cash out and end session |
+| Method | Path                | Purpose                                    |
+| ------ | ------------------- | ------------------------------------------ |
+| GET    | `/api/slot/session` | Get current session (auto-creates if none) |
+| POST   | `/api/slot/roll`    | Perform a roll                             |
+| POST   | `/api/slot/cashout` | Cash out and end session                   |
 
 ---
 
@@ -31,6 +31,7 @@ Browser                          Server
 ```
 
 **Client states on load:**
+
 - Loading -> Show loading indicator
 - Session received -> Render slot machine with credits
 - Credits = 0 -> Show Game Over screen
@@ -86,6 +87,7 @@ Browser                          Server
 | Watermelon | W | 40 |
 
 **Re-roll decision tree:**
+
 ```
 Generate 3 symbols
   -> Not a win? Return as-is
@@ -166,15 +168,15 @@ Browser                          Server
 
 ## UI States Summary
 
-| State | What's shown |
-|-------|-------------|
-| **Loading** | Loading indicator |
-| **Playing** | Slot machine (3 blocks, Roll + Cash Out buttons, credits) |
-| **Spinning** | Blocks show "X" animation, Roll disabled |
-| **Revealing** | Blocks reveal sequentially (1s, 2s, 3s), Roll disabled |
-| **Result** | All blocks revealed, win/loss feedback, Roll enabled |
-| **Game Over** | Game Over screen, "New Game" button |
-| **Cashed Out** | Success screen with final credits, "Play Again" button |
+| State          | What's shown                                              |
+| -------------- | --------------------------------------------------------- |
+| **Loading**    | Loading indicator                                         |
+| **Playing**    | Slot machine (3 blocks, Roll + Cash Out buttons, credits) |
+| **Spinning**   | Blocks show "X" animation, Roll disabled                  |
+| **Revealing**  | Blocks reveal sequentially (1s, 2s, 3s), Roll disabled    |
+| **Result**     | All blocks revealed, win/loss feedback, Roll enabled      |
+| **Game Over**  | Game Over screen, "New Game" button                       |
+| **Cashed Out** | Success screen with final credits, "Play Again" button    |
 
 ---
 
@@ -205,6 +207,7 @@ Browser                          Server
 ## Error Handling
 
 **API:** All endpoints validate the session cookie and request state. On failure, the server logs the error internally and returns a **fixed generic message** (to reduce attack surface):
+
 - **401** — `{ error: "Unauthorized" }` — Missing or invalid session.
 - **400** — `{ error: "Bad request" }` — Invalid action given current state.
 

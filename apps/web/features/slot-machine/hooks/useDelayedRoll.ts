@@ -7,7 +7,9 @@ export function useDelayedRoll(initialCredits: number) {
   const [delayedSymbols, setDelayedSymbols] = useState<
     [string | null, string | null, string | null]
   >([null, null, null]);
-  const [rollResult, setRollResult] = useState<postRoll_ResponseBody | null>(null);
+  const [rollResult, setRollResult] = useState<postRoll_ResponseBody | null>(
+    null,
+  );
   const [credits, setCredits] = useState<number>(initialCredits);
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -51,7 +53,11 @@ export function useDelayedRoll(initialCredits: number) {
     // Third symbol revealed after 2 seconds - SlotReel adds 1s delay, so displays at 3s
     // Update rollResult, credits, and stop spinning after third symbol is actually displayed (3s total)
     const timer2 = setTimeout(() => {
-      setDelayedSymbols([result.symbols[0], result.symbols[1], result.symbols[2]]);
+      setDelayedSymbols([
+        result.symbols[0],
+        result.symbols[1],
+        result.symbols[2],
+      ]);
     }, 2000);
     timersRef.current.push(timer2);
 

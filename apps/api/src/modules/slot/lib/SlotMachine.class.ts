@@ -32,4 +32,8 @@ export class SlotMachine {
   }
 }
 
-export const slotMachine = new SlotMachine(symbolGenerator, rewardCalculator, cheatPolicy);
+export const slotMachine = new SlotMachine(
+  symbolGenerator,
+  rewardCalculator,
+  cheatPolicy,
+);

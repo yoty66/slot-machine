@@ -23,15 +23,16 @@ One feature module: `features/slot-machine/`, following the existing convention 
 
 The page component derives the current screen from a combination of React Query state and local state:
 
-| Screen | Condition |
-|---|---|
-| **Loading** | Session query is loading |
-| **Playing** | Session loaded, credits > 0, not spinning |
+| Screen                 | Condition                                              |
+| ---------------------- | ------------------------------------------------------ |
+| **Loading**            | Session query is loading                               |
+| **Playing**            | Session loaded, credits > 0, not spinning              |
 | **Spinning/Revealing** | Roll mutation in flight or reveal sequence in progress |
-| **Game Over** | Credits = 0 (after roll completes) |
-| **Cashed Out** | Cashout mutation succeeded |
+| **Game Over**          | Credits = 0 (after roll completes)                     |
+| **Cashed Out**         | Cashout mutation succeeded                             |
 
 Local state tracks:
+
 - `rollResult` — Latest roll response (symbols, isWin, reward). Drives the reel display and win/loss feedback.
 - `revealPhase` — Which blocks have been revealed (0, 1, 2, 3). Drives the sequential reveal timer.
 
@@ -44,6 +45,7 @@ Credits come from React Query cache (updated after each mutation response).
 ### SlotMachinePage (page component)
 
 Orchestrates the game. Calls the three hooks, derives the active screen, handles transitions:
+
 - On mount → session query fires automatically (React Query).
 - Roll button click → fires roll mutation → sets spinning state → on success, starts reveal timer.
 - Cashout button click → fires cashout mutation → on success, shows cashed out screen.
@@ -52,6 +54,7 @@ Orchestrates the game. Calls the three hooks, derives the active screen, handles
 ### SlotReel (presentational)
 
 Renders the 3 blocks in a row. Each block shows one of:
+
 - Empty (initial state, no previous result)
 - Spinning `X` with animation (during spin/reveal phase) — animation style TBD at implementation time
 - The result letter (`C`, `L`, `O`, `W`) once revealed
@@ -82,11 +85,11 @@ Shadcn Toaster for API errors. Mounted in the layout or page. Errors from mutati
 
 Three functions, one per endpoint. Each imports `getAxiosInstance` and the response type from `@repo/network`:
 
-| Function | Method | Path | Response Type |
-|---|---|---|---|
-| `getSession` | GET | `/api/slot/session` | `getSession_ResponseBody` |
-| `postRoll` | POST | `/api/slot/roll` | `postRoll_ResponseBody` |
-| `postCashout` | POST | `/api/slot/cashout` | `postCashout_ResponseBody` |
+| Function      | Method | Path                | Response Type              |
+| ------------- | ------ | ------------------- | -------------------------- |
+| `getSession`  | GET    | `/api/slot/session` | `getSession_ResponseBody`  |
+| `postRoll`    | POST   | `/api/slot/roll`    | `postRoll_ResponseBody`    |
+| `postCashout` | POST   | `/api/slot/cashout` | `postCashout_ResponseBody` |
 
 Cookies are handled automatically (`withCredentials: true` is already set on the axios instance).
 
@@ -105,6 +108,7 @@ Cookies are handled automatically (`withCredentials: true` is already set on the
 ## Reveal Timer Logic
 
 After the roll mutation succeeds:
+
 1. Store the result in local state. All 3 blocks show spinning `X`.
 2. Start a sequence: `setTimeout` at 1s → reveal block 1, `setTimeout` at 2s → reveal block 2, `setTimeout` at 3s → reveal block 3.
 3. After block 3 reveals → update credits display, show win/loss feedback, re-enable Roll button.

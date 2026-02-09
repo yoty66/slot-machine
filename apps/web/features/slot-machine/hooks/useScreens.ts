@@ -56,8 +56,14 @@ export function useScreens({
     }
 
     setScreen("playing");
-  }, [isLoading, isSessionError, isCashoutSuccess, sessionCredits, credits, isSpinning]);
+  }, [
+    isLoading,
+    isSessionError,
+    isCashoutSuccess,
+    sessionCredits,
+    credits,
+    isSpinning,
+  ]);
 
   return screen;
 }
-

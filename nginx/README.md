@@ -10,6 +10,7 @@ Use this config to run the API and web app behind nginx on `api.local-dev.com` a
 ## Setup
 
 1. **Hosts** – add to `/etc/hosts`:
+
    ```
    127.0.0.1 api.local-dev.com app.local-dev.com
    ```
@@ -32,8 +33,8 @@ pnpm run nginx:stop
 
 Then start the apps (e.g. `pnpm run dev` in another terminal) and open:
 
-- **API**: http://api.local-dev.com/api/example  
-- **Web**: http://app.local-dev.com  
+- **API**: http://api.local-dev.com/api/example
+- **Web**: http://app.local-dev.com
 
 ## Config path
 

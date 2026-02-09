@@ -2,7 +2,10 @@ import type { Next, Context } from "hono";
 import { getCookie } from "hono/cookie";
 import logger from "../../../capabilities/logger";
 import { sessionManager } from "../lib/SessionManager.class";
-import { SESSION_COOKIE_NAME, SESSION_CONTEXT_KEY } from "../lib/session.constants";
+import {
+  SESSION_COOKIE_NAME,
+  SESSION_CONTEXT_KEY,
+} from "../lib/session.constants";
 
 export const sessionGuard = async (c: Context, next: Next) => {
   const sessionId = getCookie(c, SESSION_COOKIE_NAME);

@@ -42,13 +42,14 @@ Applied to `/roll` and `/cashout`. Reads `session_id` from cookies, resolves it 
 
 Orchestrates a single roll. Receives three collaborators via constructor injection:
 
-| Collaborator | Responsibility |
-|---|---|
-| **SymbolGenerator** | Produces a reel of 3 symbols. Uniform random (25% each) across a configurable symbol list. |
-| **RewardCalculator** | Takes 3 symbols, checks if all match, returns `{ isWin, reward }` based on a configurable reward table. |
-| **CheatPolicy** | Given current credits, decides whether to re-roll a winning result. Bracket-based: 40-60 credits → 30% chance, >60 → 60% chance. Accepts an injectable random function for deterministic testing. |
+| Collaborator         | Responsibility                                                                                                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SymbolGenerator**  | Produces a reel of 3 symbols. Uniform random (25% each) across a configurable symbol list.                                                                                                        |
+| **RewardCalculator** | Takes 3 symbols, checks if all match, returns `{ isWin, reward }` based on a configurable reward table.                                                                                           |
+| **CheatPolicy**      | Given current credits, decides whether to re-roll a winning result. Bracket-based: 40-60 credits → 30% chance, >60 → 60% chance. Accepts an injectable random function for deterministic testing. |
 
 **Roll flow:**
+
 1. Generate reel.
 2. Calculate result.
 3. If win → consult CheatPolicy → if re-roll triggered, generate a new reel and recalculate (single re-roll, not recursive).

@@ -28,10 +28,7 @@ export default function PlayingScreen({
     <div className="relative flex flex-col items-center gap-8">
       <h1 className="text-3xl font-bold">Slot Machine</h1>
       <CreditDisplay credits={credits} />
-      <SlotReel
-        symbols={delayedSymbols}
-        isSpinning={isSpinning}
-      />
+      <SlotReel symbols={delayedSymbols} isSpinning={isSpinning} />
 
       <GameControls
         onRoll={onRoll}

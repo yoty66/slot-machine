@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useRoll as useRollMutation } from "../dao/slot.queries";
 import { useDelayedRoll } from "./useDelayedRoll";
 
-
 export function useRoll(initialCredits: number) {
   const rollMutation = useRollMutation();
   const {

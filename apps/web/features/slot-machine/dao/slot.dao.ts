@@ -14,6 +14,8 @@ export function postRoll(): Promise<AxiosResponse<postRoll_ResponseBody>> {
   return axios.post<postRoll_ResponseBody>("/api/slot/roll");
 }
 
-export function postCashout(): Promise<AxiosResponse<postCashout_ResponseBody>> {
+export function postCashout(): Promise<
+  AxiosResponse<postCashout_ResponseBody>
+> {
   return axios.post<postCashout_ResponseBody>("/api/slot/cashout");
 }

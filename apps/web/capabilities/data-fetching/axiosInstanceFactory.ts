@@ -6,8 +6,7 @@ if (!apiUrl) {
 }
 
 export default function getAxiosInstance() {
-  const baseURL =
-    process.env.NEXT_PUBLIC_API_URL ;
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
   const axiosBase = axios.create({
     baseURL,
     withCredentials: true,

@@ -74,10 +74,7 @@ function SlotBlock({
   );
 }
 
-export default function SlotReel({
-  symbols,
-  isSpinning,
-}: SlotReelProps) {
+export default function SlotReel({ symbols, isSpinning }: SlotReelProps) {
   return (
     <div
       className="border-2 border-border rounded-xl bg-muted/30 p-4"

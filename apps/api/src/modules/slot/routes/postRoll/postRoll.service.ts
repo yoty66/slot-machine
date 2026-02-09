@@ -5,7 +5,10 @@ import { slotMachine } from "../../lib/SlotMachine.class";
 import { ROLL_COST } from "../../lib/slot.constants";
 
 export const executeRoll = (session: Session): postRoll_ResponseBody => {
-  const afterDeduction = sessionManager.updateCredits(session.id, session.credits - ROLL_COST);
+  const afterDeduction = sessionManager.updateCredits(
+    session.id,
+    session.credits - ROLL_COST,
+  );
   if (!afterDeduction) {
     throw new Error("Session lost during roll");
   }
@@ -15,7 +18,10 @@ export const executeRoll = (session: Session): postRoll_ResponseBody => {
   let finalCredits = afterDeduction.credits;
   if (result.isWin) {
     // If a user wins. we don't deduct the ROLL_COST
-    const afterReward = sessionManager.updateCredits(session.id, session.credits + result.reward);
+    const afterReward = sessionManager.updateCredits(
+      session.id,
+      session.credits + result.reward,
+    );
     if (!afterReward) {
       throw new Error("Session lost during reward");
     }
