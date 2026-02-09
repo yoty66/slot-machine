@@ -1,5 +1,5 @@
 import type { postRoll_ResponseBody } from "@repo/network/slot/postRoll";
-import type { Session } from "../../../session/lib/Session";
+import type { Session } from "../../../session/lib/Session.types";
 import { sessionManager } from "../../../session/lib/SessionManager.class";
 import { slotMachine } from "../../lib/SlotMachine.class";
 import { ROLL_COST } from "../../lib/slot.constants";

@@ -1,4 +1,4 @@
-import type { Session } from "./Session";
+import type { Session } from "./Session.types";
 import { INITIAL_CREDITS } from "./session.constants";
 
 export type SessionStore = Map<string, Session>;

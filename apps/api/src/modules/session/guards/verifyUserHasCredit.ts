@@ -1,5 +1,5 @@
 import type { Next, Context } from "hono";
-import type { Session } from "../lib/Session";
+import type { Session } from "../lib/Session.types";
 import logger from "../../../capabilities/logger";
 import { SESSION_CONTEXT_KEY } from "../lib/session.constants";
 

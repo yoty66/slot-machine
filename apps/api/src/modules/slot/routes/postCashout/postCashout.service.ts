@@ -1,5 +1,5 @@
 import type { postCashout_ResponseBody } from "@repo/network/slot/postCashout";
-import type { Session } from "../../../session/lib/Session";
+import type { Session } from "../../../session/lib/Session.types";
 import { sessionManager } from "../../../session/lib/SessionManager.class";
 
 export const executeCashout = (session: Session): postCashout_ResponseBody => {

@@ -1,7 +1,7 @@
 import type { postRoll_ResponseBody } from "@repo/network/slot/postRoll";
 import SlotReel from "./SlotReel";
 import GameControls from "./GameControls";
-import CreditDisplay from "../GameOverScreen/CreditDisplay";
+import CreditDisplay from "./CreditDisplay";
 
 interface PlayingScreenProps {
   credits: number;
