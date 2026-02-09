@@ -1,15 +1,6 @@
-# Turborepo + Hono + Next.js starter
+# Slot Machine — Full-Stack Assignment
 
-Monorepo starter with an API (Hono), a web app (Next.js), and shared packages. TypeScript throughout, with unit tests, optional nginx for local dev, and a Puppeteer sanity check.
-
-## Documentation
-
-The **`docs/`** folder holds the documentation for this project: **requirements**, **design**, and **thought process**. In particular, the planning documents under `docs/requirements/planing/` are:
-
-- [ASSUMPTIONS_AND_DECISIONS.md](docs/requirements/planing/ASSUMPTIONS_AND_DECISIONS.md)
-- [FLOW_PLANING.md](docs/requirements/planing/FLOW_PLANING.md)
-- [SERVER_PLANING.md](docs/requirements/planing/SERVER_PLANING.md)
-
+A full-stack slot machine game built as a monorepo with an API (Hono), a web app (Next.js), and shared packages. TypeScript throughout, with unit tests, optional nginx for local dev, and a Puppeteer sanity check. The game implements a "house always wins" mechanic with progressive cheating based on player credit levels.
 
 ## What's inside
 
@@ -27,27 +18,113 @@ The **`docs/`** folder holds the documentation for this project: **requirements*
 
 Workspace is defined in `pnpm-workspace.yaml` (`apps/*`, `packages/*`).
 
-## File structure and modularity
+## API — Design & Decisions
 
-### API (`apps/api/`)
+### Architecture
 
-- **Modular layout:** `src/modules/<module>/` with `routes/`, `dao/`, `guards/`, `lib/`, and `testing/` (route tests). Top-level `src/routes/` mounts module routes; `src/capabilities/` holds cross-cutting concerns (cors, logger, error-handling).
-- **Pattern:** One domain per module; routes use controllers/services; contracts live in `@repo/network`.
+The server exposes three REST endpoints under `/api/slot/` that drive a slot machine game. Session state is held in-memory for the lifetime of the process. The core game logic is decoupled from HTTP handling through a class-based architecture with dependency injection.
 
-### Web (`apps/web/`)
+**Two modules**, both mounted under `/api/slot`:
 
-- **Feature-based layout:** `features/<feature>/` with `pages/`, `dao/`, `testing/`. `app/` for Next routes and layout; `capabilities/` for data-fetching, etc.; `components/` for shared UI.
-- **Pattern:** Features own their pages, API calls (dao), and tests; shared types from `@repo/network`.
+- **session** — Session lifecycle (create, lookup, destroy) and the `GET /session` endpoint.
+- **slot** — Game logic and the `POST /roll`, `POST /cashout` endpoints.
 
-### Contracts
+The session module owns the in-memory store and a guard middleware. The slot module depends on the session guard but owns all game mechanics independently.
 
-`@repo/network` defines request/response types (and optionally Zod schemas) per endpoint so api and web stay in sync. Example: `packages/network/src/modules/example/`.
+**Key Components:**
+
+- **SessionManager** (singleton) — In-memory `Map<id, Session>` with CRUD. Creates sessions with 10 starting credits and UUID. No persistence beyond process lifetime.
+- **Session Guard** (middleware) — Applied to `/roll` and `/cashout`. Reads `session_id` cookie, resolves against SessionManager. Returns 401 if missing/invalid. `GET /session` has no guard — auto-creates when no session exists.
+- **SlotMachine** (singleton, DI) — Orchestrates a single roll. Receives three collaborators via constructor injection:
+  - **SymbolGenerator** — Produces 3 symbols, uniform random (25% each).
+  - **RewardCalculator** — Checks if all 3 match, returns `{ isWin, reward }` based on reward table.
+  - **CheatPolicy** — Decides whether to re-roll a winning result. Bracket-based: 40-60 credits → 30% chance, >60 → 60% chance.
+
+**Why Dependency Injection:** Each collaborator is behind an interface. This satisfies Open/Closed Principle (new symbol sets, reward tables, or cheat brackets require config changes — not class modifications), Single Responsibility Principle, and makes unit testing trivial with mocks/stubs.
+
+### Endpoints & Flow
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/api/slot/session` | Get current session (auto-creates if none) |
+| POST | `/api/slot/roll` | Perform a roll |
+| POST | `/api/slot/cashout` | Cash out and end session |
+
+**Roll Flow:** User clicks Roll → `POST /roll` (session guard validates) → Deduct 1 credit → Generate 3 symbols (25% each) → Check win → If win and credits in cheat range (40-60: 30% chance, >60: 60% chance), re-roll once → If win, add reward → Clamp to min 0 → Save → Return `{ symbols, credits, isWin, reward }`
+
+### Key Decisions
+
+**Generic Error Responses** — Fixed generic messages: `{ error: "Bad request" }` for 400, `{ error: "Unauthorized" }` for 401. No specific details leaked to client.
+
+**Rationale:** Reduces attack surface by not leaking internal state, validation logic, or implementation details to the client. Specific error details are logged server-side only. This is a good pattern when we expect the API to only be consumed via the web app.
+
+**Single Re-Roll (No Recursion)** — When the server decides to re-roll a winning round (30% or 60% chance based on credit range), it performs a **single re-roll only**. If the re-rolled result is also a win, the win stands — no recursive re-rolling.
+
+**Rationale:** If we want a higher chance to deny wins, we should increase the re-roll probability directly rather than creating a recursive re-roll loop. A recursive approach just complicates the probability math while achieving the same effect — controlling it via a single probability value is cleaner and more transparent.
+
+**Cookie Security** — Session ID is generated with `crypto.randomUUID()` so IDs are unpredictable and not guessable in practice; cookie is set with `httpOnly` and `sameSite: "Lax"`. Local/dev nginx has no SSL, so `secure` is not set there; **in production we will add `secure: true`** (HTTPS only).
+
+## Web App — Design & Decisions
+
+### Architecture
+
+A single-page slot machine UI built as a Next.js `"use client"` feature. All game screens render conditionally within one page — no routing. Server state managed via React Query + Axios. React Query's cache is the single source of truth for credits; local component state handles UI-only concerns (spinning phase, revealed slots).
+
+**One feature module:** `features/slot-machine/`. Data flow: Axios (DAO) → React Query hooks → Page component → UI components. DAO layer provides thin axios wrappers. React Query hooks handle cache invalidation. Page component derives current screen. UI components are presentational.
+
+### Game State Machine
+
+The page component derives the current screen from a combination of React Query state and local state:
+
+| Screen | Condition |
+|--------|-----------|
+| **Loading** | Session query is loading |
+| **Error** | Initial session fetch failed |
+| **Playing** | Session loaded, credits > 0, not spinning |
+| **Spinning/Revealing** | Roll mutation in flight or reveal sequence in progress |
+| **Game Over** | Credits = 0 (after roll completes) |
+| **Cashed Out** | Cashout mutation succeeded |
+
+**Local state:** `rollResult` (latest roll response) and `revealPhase` (0-3, which blocks revealed). Credits from React Query cache.
+
+### Data Layer
+
+**DAO** (`features/slot-machine/dao/slot.dao.ts`) — Three axios wrappers: `getSession`, `postRoll`, `postCashout`. Types imported from `@repo/network`. Cookies handled automatically.
+
+**React Query Hooks** (`features/slot-machine/dao/slot.queries.ts`):
+- **`useSession`** — `useQuery` for session, fetches on mount, provides credits.
+- **`useRoll`** — `useMutation` for roll, updates session cache on success, returns roll result.
+- **`useCashout`** — `useMutation` for cashout, clears session cache on success.
+
+### Reveal Timer Logic
+
+After roll mutation succeeds: store result in local state, all blocks show spinning `X`. Sequential reveal via `setTimeout` at 1.3s, 2.3s, 3.3s. After block 3 reveals, update credits, show feedback, re-enable Roll button. This is local state (`revealPhase: 0 | 1 | 2 | 3`), not server state — client holds result and reveals progressively.
+
+### Key Decisions
+
+**No SSR** — The web application will **not use Server-Side Rendering (SSR)** in Next.js, despite the potential benefit of preventing initial loading states (e.g., fetching session data on the server).
+
+**Rationale:** SSR introduces security vulnerabilities and attack surface. Recent examples include React2Shell and other server-side rendering exploits.
+
+**Single Page Application (SPA)** — No routing, all screens render conditionally within one page. Eliminates need for complex global state management and simplifies architecture.
+
+**Container/Presentational Pattern** — All state and logic in `SlotMachinePage`, presentation components are display-only. Improves testability and maintainability.
+
+**Symbol Display Timing** — Delays are **1.3s, 2.3s, and 3.3s** (includes 0.3s fade animation) for smooth visual experience.
+
+**Error Handling via Toast** — All API errors surfaced via Shadcn Toaster. Game UI stays intact. Exception: initial session loading failures show ErrorScreen with retry button instead of toast.
 
 ## Testing
 
-- **Unit tests:** API and web use **Vitest**. API tests live under `src/modules/<module>/testing/`; web tests under `features/<feature>/testing/`. Run all from root: `pnpm run test`. Run per app: `pnpm run test` inside `apps/api` or `apps/web`.
+- **Unit tests:** API and web use **Vitest**. API tests live under `src/modules/<module>/tests/`; web tests under `features/<feature>/testing/`. Run all from root: `pnpm run test`. Run per app: `pnpm run test` inside `apps/api` or `apps/web`.
 - **Coverage:** `pnpm run coverage` runs `test:coverage` for api and web; reports under each app’s `coverage/` directory.
 - **Build runs unit tests:** The Turbo **build** pipeline runs **unit tests before build**. The `build` task depends on the `test` task (`turbo.json`), so `pnpm run build` runs tests for api and web first, then builds.
+
+**Testing Philosophy — Black-Box Over Implementation Coupling:**
+
+Unit tests must not assume or depend on internal implementation details. For example, rather than injecting a `randomFn` into `CheatPolicy` (which couples tests to the knowledge that the class uses a random function internally), we test the **statistical behavior** by running many trials and asserting the re-roll rate matches the expected probability within a tolerance.
+
+**Rationale:** If the implementation changes (e.g., switching from `Math.random` to `crypto.getRandomValues()`), the tests should still pass as long as the behavior is correct. Tests that mock or inject internals break on refactors even when behavior is unchanged — that's a sign they're testing the wrong thing.
 
 ## Running locally
 
@@ -103,6 +180,7 @@ From repo root:
 | Command | Description |
 |---------|-------------|
 | `pnpm run build` | Build all (runs unit tests first) |
+| `pnpm run build:no-cache` | Build without Turbo cache (`--force`) |
 | `pnpm run dev` | Start web and api in dev |
 | `pnpm run test` | Run unit tests in all packages that define them |
 | `pnpm run coverage` | Run tests with coverage |
@@ -112,4 +190,4 @@ From repo root:
 | `pnpm run format` | Format with Prettier |
 | `pnpm run nginx:start` | Start local nginx (see nginx/README.md) |
 | `pnpm run nginx:stop` | Stop nginx |
-| `pnpm run build:no-cache` | Build without Turbo cache (`--force`) |
+
