@@ -8,7 +8,6 @@
     "test": "turbo run test",
     "coverage": "turbo run test:coverage",
     "sanity": "pnpm --filter @repo/sanity-check run sanity",
-    "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "nginx:start": "nginx -c \"$(pwd)/nginx/ngnix_local.conf\"",

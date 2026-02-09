@@ -13,8 +13,13 @@ A full-stack slot machine game built as a monorepo with an API (Hono), a web app
 
 - **@repo/network** – Shared API contracts (types/schemas) used by api and web.
 - **@repo/typescript-config** – Shared tsconfig presets (`base.json`, `nextjs.json`, `node.json`).
-- **@repo/eslint-config** – Shared ESLint configs.
 - **@repo/sanity-check** – Standalone Puppeteer sanity script; assumes web and API (and optionally nginx) are already running.
+
+### Documentation
+
+The **`docs/`** folder contains requirements and planning documentation:
+- **`docs/planing/`** – Planning documents including assumptions, decisions, server/client design, and flow planning
+- **`docs/requirements/raw/`** – Original assignment brief and Q&A emails
 
 Workspace is defined in `pnpm-workspace.yaml` (`apps/*`, `packages/*`).
 
@@ -44,11 +49,11 @@ The session module owns the in-memory store and a guard middleware. The slot mod
 
 ### Endpoints & Flow
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/slot/session` | Get current session (auto-creates if none) |
-| POST | `/api/slot/roll` | Perform a roll |
-| POST | `/api/slot/cashout` | Cash out and end session |
+| Method | Path                | Purpose                                    |
+| ------ | ------------------- | ------------------------------------------ |
+| GET    | `/api/slot/session` | Get current session (auto-creates if none) |
+| POST   | `/api/slot/roll`    | Perform a roll                             |
+| POST   | `/api/slot/cashout` | Cash out and end session                   |
 
 **Roll Flow:** User clicks Roll → `POST /roll` (session guard validates) → Deduct 1 credit → Generate 3 symbols (25% each) → Check win → If win and credits in cheat range (40-60: 30% chance, >60: 60% chance), re-roll once → If win, add reward → Clamp to min 0 → Save → Return `{ symbols, credits, isWin, reward }`
 
@@ -76,14 +81,14 @@ A single-page slot machine UI built as a Next.js `"use client"` feature. All gam
 
 The page component derives the current screen from a combination of React Query state and local state:
 
-| Screen | Condition |
-|--------|-----------|
-| **Loading** | Session query is loading |
-| **Error** | Initial session fetch failed |
-| **Playing** | Session loaded, credits > 0, not spinning |
+| Screen                 | Condition                                              |
+| ---------------------- | ------------------------------------------------------ |
+| **Loading**            | Session query is loading                               |
+| **Error**              | Initial session fetch failed                           |
+| **Playing**            | Session loaded, credits > 0, not spinning              |
 | **Spinning/Revealing** | Roll mutation in flight or reveal sequence in progress |
-| **Game Over** | Credits = 0 (after roll completes) |
-| **Cashed Out** | Cashout mutation succeeded |
+| **Game Over**          | Credits = 0 (after roll completes)                     |
+| **Cashed Out**         | Cashout mutation succeeded                             |
 
 **Local state:** `rollResult` (latest roll response) and `revealPhase` (0-3, which blocks revealed). Credits from React Query cache.
 
@@ -92,6 +97,7 @@ The page component derives the current screen from a combination of React Query 
 **DAO** (`features/slot-machine/dao/slot.dao.ts`) — Three axios wrappers: `getSession`, `postRoll`, `postCashout`. Types imported from `@repo/network`. Cookies handled automatically.
 
 **React Query Hooks** (`features/slot-machine/dao/slot.queries.ts`):
+
 - **`useSession`** — `useQuery` for session, fetches on mount, provides credits.
 - **`useRoll`** — `useMutation` for roll, updates session cache on success, returns roll result.
 - **`useCashout`** — `useMutation` for cashout, clears session cache on success.
@@ -177,17 +183,15 @@ Without nginx use the default URL; with nginx set `SANITY_APP_URL=http://app.loc
 
 From repo root:
 
-| Command | Description |
-|---------|-------------|
-| `pnpm run build` | Build all (runs unit tests first) |
-| `pnpm run build:no-cache` | Build without Turbo cache (`--force`) |
-| `pnpm run dev` | Start web and api in dev |
-| `pnpm run test` | Run unit tests in all packages that define them |
-| `pnpm run coverage` | Run tests with coverage |
-| `pnpm run sanity` | Run Puppeteer sanity check (apps must be running) |
-| `pnpm run lint` | Lint |
-| `pnpm run check-types` | Type-check |
-| `pnpm run format` | Format with Prettier |
-| `pnpm run nginx:start` | Start local nginx (see nginx/README.md) |
-| `pnpm run nginx:stop` | Stop nginx |
-
+| Command                   | Description                                       |
+| ------------------------- | ------------------------------------------------- |
+| `pnpm run build`          | Build all (runs unit tests first)                 |
+| `pnpm run build:no-cache` | Build without Turbo cache (`--force`)             |
+| `pnpm run dev`            | Start web and api in dev                          |
+| `pnpm run test`           | Run unit tests in all packages that define them   |
+| `pnpm run coverage`       | Run tests with coverage                           |
+| `pnpm run sanity`         | Run Puppeteer sanity check (apps must be running) |
+| `pnpm run check-types`    | Type-check                                        |
+| `pnpm run format`         | Format with Prettier                              |
+| `pnpm run nginx:start`    | Start local nginx (see nginx/README.md)           |
+| `pnpm run nginx:stop`     | Stop nginx                                        |
