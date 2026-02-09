@@ -6,10 +6,6 @@
 - If the re-rolled result is also a win, the win stands — no recursive re-rolling.
 - Rationale: If we want a higher chance to deny wins, we should increase the re-roll probability directly rather than creating a recursive re-roll loop. A recursive approach just complicates the probability math while achieving the same effect — controlling it via a single probability value is cleaner and more transparent.
 
-## Deduction when winning 
-- We assume that a 1 credit is deduced even if the user have won. e.g: If a user had 10 credits before a reel, and he won 10 credits his final credits will be 
-10+10-1=19 
-- Rationale: this simulates real world example 
 
 
 

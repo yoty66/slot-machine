@@ -14,7 +14,8 @@ export const executeRoll = (session: Session): postRoll_ResponseBody => {
 
   let finalCredits = afterDeduction.credits;
   if (result.isWin) {
-    const afterReward = sessionManager.updateCredits(session.id, afterDeduction.credits + result.reward);
+    // If a user wins. we don't deduct the ROLL_COST
+    const afterReward = sessionManager.updateCredits(session.id, session.credits + result.reward);
     if (!afterReward) {
       throw new Error("Session lost during reward");
     }

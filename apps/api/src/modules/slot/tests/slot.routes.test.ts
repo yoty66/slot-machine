@@ -99,19 +99,43 @@ describe("POST /api/slot/roll", () => {
   });
 
   it("credits decrease by 1 after a loss", async () => {
-    const session = createSessionWithCredits(5);
-    const res = await app.request("/api/slot/roll", {
-      method: "POST",
-      headers: { cookie: cookie(session.id) },
-    });
-    expect(res.status).toBe(200);
-    const body = (await res.json()) as RollResponseBody;
-    if (!body.isWin) {
+    // Retry until we get a loss (75% chance per attempt)
+    for (let attempt = 0; attempt < 20; attempt++) {
+      sessionManager.resetInstance();
+      const session = createSessionWithCredits(5);
+      const res = await app.request("/api/slot/roll", {
+        method: "POST",
+        headers: { cookie: cookie(session.id) },
+      });
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as RollResponseBody;
+      if (body.isWin) continue;
+
       expect(body.credits).toBe(4);
       expect(body.reward).toBe(0);
-    } else {
-      expect(body.credits).toBe(4 + body.reward);
+      return;
     }
+    throw new Error("Failed to get a loss after 20 attempts");
+  });
+
+  it("credits are calculated correctly after a win", async () => {
+    // Retry until we get a win (25% chance per attempt)
+    for (let attempt = 0; attempt < 20; attempt++) {
+      sessionManager.resetInstance();
+      const session = createSessionWithCredits(5);
+      const res = await app.request("/api/slot/roll", {
+        method: "POST",
+        headers: { cookie: cookie(session.id) },
+      });
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as RollResponseBody;
+      if (!body.isWin) continue;
+
+      expect(body.credits).toBe(5 + body.reward);
+      expect(body.reward).toBeGreaterThan(0);
+      return;
+    }
+    throw new Error("Failed to get a win after 20 attempts");
   });
 });
 
