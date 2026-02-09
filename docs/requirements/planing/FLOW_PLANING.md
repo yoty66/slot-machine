@@ -211,3 +211,5 @@ Browser                          Server
 No specific error details in the response. Error details are logged server-side only.
 
 **UI:** All API errors (network failures, 401, 400) are surfaced to the user via a **Shadcn Toaster** component (toast notification). The game UI remains on screen — errors do not navigate the user away or break the current view. The toast disappears after a few seconds.
+
+The only exception is during initial session loading: if the session fetch fails, a dedicated error page is displayed instead of a toast notification.

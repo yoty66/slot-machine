@@ -143,6 +143,8 @@ Update `app/page.tsx` to render `SlotMachinePage` instead of `ExamplePage`.
 - **401 (session gone)** → The axios interceptor already catches this. The toast shows a generic error. User can click "New Game" or refresh to get a fresh session.
 - **400 (0 credits trying to roll)** → Shouldn't happen because the UI disables Roll at 0 credits, but if it does, toast notification handles it gracefully.
 
+The only exception is during initial session loading: if the session fetch fails, a dedicated error page is displayed instead of a toast notification.
+
 ---
 
 ## Testing Strategy

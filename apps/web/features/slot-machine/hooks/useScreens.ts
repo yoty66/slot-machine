@@ -45,7 +45,7 @@ export function useScreens({
       return;
     }
 
-    if (sessionCredits === 0 && !isSpinning) {
+    if (credits === 0 && !isSpinning) {
       setScreen("gameOver");
       return;
     }

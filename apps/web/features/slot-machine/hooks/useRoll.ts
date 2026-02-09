@@ -1,10 +1,9 @@
 "use client";
-
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { useRoll as useRollMutation } from "../dao/slot.queries";
 import { useDelayedRoll } from "./useDelayedRoll";
-import type { postRoll_ResponseBody } from "@repo/network/slot/postRoll";
+
 
 export function useRoll(initialCredits: number) {
   const rollMutation = useRollMutation();
